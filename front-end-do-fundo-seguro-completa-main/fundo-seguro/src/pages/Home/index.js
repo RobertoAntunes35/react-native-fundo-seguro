@@ -7,33 +7,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useDebit } from "../../context/accountsContext";
 import { useState } from "react";
 
-
-const list = [
-    {
-        id:1,
-        type: 'credit',
-        amount: '4.200,00',
-        description: 'SALARIO'
-    },
-    {
-        id:2,
-        type: 'debit',
-        amount: '120,00',
-        description: 'CONTA DE AGUA'
-    },
-    {
-        id:3,
-        type: 'credit',
-        amount: '400,00',
-        description: 'INVESTIMENTO'
-    },   
-]
-
 const Home = () => {
     const navigation = useNavigation()
-    const {state, total} = useDebit();
+    const { state, totalCredit, totalDebit, lista_valores } = useDebit();
 
-    console.log(total)
+    const saldo_final = totalCredit - totalDebit
     const renderItem = ({item}) => (
         <TransactionCard
         type={item.type}
@@ -45,12 +23,12 @@ const Home = () => {
     return (
         <View style={styles.container}>
             <Header name="Roberto Antunes"/>
-            <Balance saldo={total} gastos={total}/>
+            <Balance saldo={saldo_final} gastos={totalDebit}/>
             <Actions/>
             <Text style={styles.title}>Últimas Movimentação</Text>
-            <FlatList 
+            <FlatList
             style={styles.list}
-            data={state.debitList}
+            data={lista_valores}
             keyExtractor={(item) => String(item.id)}
             showsVerticalScrollIndicator={false}
             renderItem={renderItem}
@@ -58,7 +36,6 @@ const Home = () => {
         </View>
     )
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -70,7 +47,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 14,
         marginLeft: 14,
-        marginTop:14
+        marginTop:10
     },
     list: {
         marginStart: 14,

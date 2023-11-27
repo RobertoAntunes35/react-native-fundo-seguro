@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Alert } from 'react-native';
-import { TextInput, Button, HelperText, Divider, Menu } from 'react-native-paper';
-
+import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Alert,  } from 'react-native';
+import { TextInput, HelperText, Button} from 'react-native-paper';
 import { useDebit } from '../../context/accountsContext';
 
-
 const AddDebitScreen = ({ navigation }) => {
-  const id = 0
   const [description, setDescription] = useState('');
+  
   const [amount, setAmount] = useState('');
-  const [type, setType] = useState('');
-  const [dateV, setDateV] = useState(null);
+  const [dateV, setDateV] = useState('');
   const [amountError, setAmountError] = useState('');
-  const {addDebit} = useDebit();
+  const {addDebit, addCredit} = useDebit();
+  
 
+  const [type, setType] = useState('debit')
 
   const handleAddDebit = () => {
     if (!description) {
@@ -28,16 +27,18 @@ const AddDebitScreen = ({ navigation }) => {
       setAmountError('');
     }
 
-    // Lógica para adicionar o débito
-    const newDebit = {
+    const account = {
       description,
-      amount,
+      amount:parseFloat(amount),
       type,
       dateV
     }
+    if (account.type === 'debit') {
+      addDebit(account)
+    } else {
+      addCredit(account)
+    }
 
-
-    addDebit(newDebit);
     // Navegar para a tela anterior ou realizar qualquer outra ação desejada
     navigation.navigate('Home');
   };
@@ -54,17 +55,18 @@ const AddDebitScreen = ({ navigation }) => {
           onChangeText={(text) => setDescription(text)}
           style={styles.input}
         />
-
+        
         <TextInput
-          label="Tipo (credit or debit)"
+          label="Tipo - DEBIT | CREDIT"
           value={type}
           onChangeText={(text) => setType(text)}
           style={styles.input}
         />
 
         <TextInput
-          label="Data Vencimento"
+          label="Data Entrada"
           value={dateV}
+          keyboardType='numbers-and-punctuation'
           onChangeText={(text) => setDateV(text)}
           style={styles.input}
         />
@@ -124,6 +126,22 @@ const styles = StyleSheet.create({
   menuButton: {
     marginTop: 10,
   },
+  dropDown: {
+    borderColor: '#fff',
+    borderBottomColor: '#000',
+    borderWidth: 0.5,
+    borderRadius: 0,
+  },
+  viewDropDown: {
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15
+  }
+  
+
 });
 
 export default AddDebitScreen;
